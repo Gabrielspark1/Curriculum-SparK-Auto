@@ -13,7 +13,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from kivy.uix.popup import Popup
 
-# --- COLORES ---
 COLOR_PRIMARIO = "#2c3e50"
 COLOR_BOTON = "#27ae60"
 COLOR_TEXTO = "#333333"
@@ -44,7 +43,6 @@ class CvCreatorApp(App):
         )
         self.form_layout.bind(minimum_height=self.form_layout.setter('height'))
 
-        # 🔹 DATOS PERSONALES
         self.agregar_seccion("📋 DATOS PERSONALES")
         self.agregar_campo("Nombre completo", "nombre")
         self.agregar_campo("Profesión / Cargo", "profesion")
@@ -53,11 +51,9 @@ class CvCreatorApp(App):
         self.agregar_campo("Correo electrónico", "correo")
         self.agregar_campo("Enlace a LinkedIn", "linkedin")
 
-        # 🔹 PERFIL
         self.agregar_seccion("📝 PERFIL PROFESIONAL")
         self.agregar_campo("Descripción breve sobre vos", "perfil", multiline=True)
 
-        # 🔹 EXPERIENCIA
         self.agregar_seccion("💼 EXPERIENCIA LABORAL")
         self.agregar_campo("Periodo (ej: 2018-2020)", "exp1_fecha")
         self.agregar_campo("Cargo / Puesto", "exp1_cargo")
@@ -69,7 +65,6 @@ class CvCreatorApp(App):
         self.agregar_campo("Empresa / Organización", "exp2_empresa")
         self.agregar_campoFunciones("Tareas y logros", "exp2_tareas")
 
-        # 🔹 EDUCACIÓN
         self.agregar_seccion("🎓 EDUCACIÓN")
         self.agregar_campo("Periodo", "edu1_fecha")
         self.agregar_campo("Título / Estudios", "edu1_titulo")
@@ -79,11 +74,9 @@ class CvCreatorApp(App):
         self.agregar_campo("Título / Estudios", "edu2_titulo")
         self.agregar_campo("Institución educativa", "edu2_inst")
 
-        # 🔹 INFORMACIÓN ADICIONAL
         self.agregar_seccion("ℹ️ INFORMACIÓN ADICIONAL")
         self.agregar_campo("Datos extra (disponibilidad, licencias, etc)", "adicional", multiline=True)
 
-        # 🔹 IDIOMAS
         self.agregar_seccion("🗣️ IDIOMAS")
         self.agregar_campo("Idioma 1 y nivel (ej: Inglés: C2)", "idioma1")
         self.agregar_campo("Idioma 2 y nivel", "idioma2")
@@ -131,8 +124,7 @@ class CvCreatorApp(App):
             hint_text=f"Ingresar {texto.lower()}",
             multiline=multiline,
             size_hint_y=None,
-            height=80 if multiline else 50,
-            padding=[10,10]
+            height=80 if multiline else 50
         )
         entrada.id = clave
         entrada.bind(text=self.guardar_texto)
@@ -152,8 +144,7 @@ class CvCreatorApp(App):
             hint_text="• Escribir cada punto en una línea",
             multiline=True,
             size_hint_y=None,
-            height=100,
-            padding=[10,10]
+            height=100
         )
         entrada.id = clave
         entrada.bind(text=self.guardar_texto)
@@ -172,43 +163,36 @@ class CvCreatorApp(App):
         btn.bind(on_release=popup.dismiss)
         popup.open()
 
-    # --- ✅ GENERACIÓN PDF - CORREGIDA Y ADAPTADA A ANDROID ---
     def generar_pdf(self, instancia):
         if not self.datos.get("nombre"):
             self.mostrar_aviso("⚠️ Escribí al menos el nombre para continuar")
             return
 
-        # ✅ AJUSTE PARA ANDROID: Guardar en almacenamiento privado compatible con API 33 sin crashear
         try:
             from android.storage import app_storage_dir
             base_dir = app_storage_dir()
         except ImportError:
-            base_dir = os.path.expanduser("~") # Fallback seguro por si testeas en PC (Windows/Mac)
+            base_dir = os.path.expanduser("~")
 
         ruta_pdf = os.path.join(base_dir, "Curriculum_Vitae.pdf")
-        
         c = canvas.Canvas(ruta_pdf, pagesize=A4)
         ancho, alto = A4
 
-        # 📌 RECUADRO FINO ELEGANTE
         c.setLineWidth(0.3)
         c.setStrokeColorRGB(0.4, 0.4, 0.4)
         c.rect(1.8*cm, 1.8*cm, ancho - 3.6*cm, alto - 3.6*cm)
 
-        # 📌 TU MARCA - TEXTO VERTICAL, SUTIL, INGLÉS
         c.saveState()
         c.translate(0.7*cm, alto/2)
         c.rotate(90)
-        c.setFont("Helvetica", 6) # Modificado a Helvetica estándar por compatibilidad directa
+        c.setFont("Helvetica", 6)
         c.setFillColorRGB(0.65, 0.65, 0.65)
-        c.drawCentredString(0, 0, "© Created by Gabriel Spark | Independent Designer | Contact: +54 2616 68 5065")
+        c.drawCentredString(0, 0, "© Created by Gabriel Spark | Contact: +54 2616 68 5065")
         c.restoreState()
 
-        # 📌 CONTENIDO PRINCIPAL
         y = alto - 3*cm
         margen_izq = 2.5*cm
 
-        # NOMBRE Y PROFESIÓN
         c.setFont("Helvetica-Bold", 18)
         c.setFillColorRGB(0.1, 0.1, 0.1)
         c.drawString(margen_izq, y, self.datos.get("nombre", "Nombre Completo").upper())
@@ -219,7 +203,6 @@ class CvCreatorApp(App):
         c.drawString(margen_izq, y, self.datos.get("profesion", "Profesión"))
         y -= 1*cm
 
-        # DATOS DE CONTACTO (Se quitaron los emojis nativos para evitar roturas de fuentes en ReportLab)
         c.setFont("Helvetica", 9)
         c.setFillColorRGB(0.25, 0.25, 0.25)
         if self.datos.get("direccion"): 
@@ -235,12 +218,10 @@ class CvCreatorApp(App):
             c.drawString(margen_izq, y, f"LinkedIn: {self.datos['linkedin']}")
             y -= 1*cm
 
-        # LÍNEA SEPARADORA
         c.setLineWidth(0.2)
         c.line(margen_izq, y, ancho - 2.5*cm, y)
         y -= 0.8*cm
 
-        # --- FUNCIÓN DE RENDERIZADO DE SECCIONES CORREGIDA ---
         def seccion(titulo, contenido):
             nonlocal y
             if contenido and contenido.strip():
@@ -256,7 +237,6 @@ class CvCreatorApp(App):
                         y -= 0.4*cm
                 y -= 0.5*cm
 
-        # RENDERIZADO DE LOS BLOQUES DE TEXTO
         seccion("Perfil Profesional", self.datos.get("perfil", ""))
         
         exp_texto = ""
@@ -265,3 +245,18 @@ class CvCreatorApp(App):
         seccion("Exp Laboral", exp_texto)
 
         edu_texto = ""
+        if self.datos.get("edu1_titulo"): edu_texto += f"{self.datos.get('edu1_fecha', '')} | {self.datos['edu1_titulo']} ({self.datos.get('edu1_inst','')})\n"
+        if self.datos.get("edu2_titulo"): edu_texto += f"{self.datos.get('edu2_fecha', '')} | {self.datos['edu2_titulo']} ({self.datos.get('edu2_inst','')})"
+        seccion("Educacion", edu_texto)
+
+        seccion("Informacion Adicional", self.datos.get("adicional", ""))
+
+        idiomas_texto = "\n".join([self.datos[k] for k in ["idioma1", "idioma2", "idioma3"] if self.datos.get(k)])
+        seccion("Idiomas", idiomas_texto)
+
+        c.showPage()
+        c.save()
+        self.mostrar_aviso(f"¡PDF Generado!\nGuardado en la carpeta interna de la app.")
+
+if __name__ == "__main__":
+    CvCreatorApp().run()
