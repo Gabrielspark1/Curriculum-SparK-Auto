@@ -9,36 +9,27 @@ source.include_exts = py,png,jpg,kv,atlas
 
 version = 1.0.0
 
-# ✅ CORREGIDO: Dejamos solo lo esencial. 'reportlab' y 'pillow' se instalarán 
-# automáticamente a través de la instrucción pip del archivo build.yml
+# Quedan solo estos tres requerimientos base. Reportlab y Pillow entran mediante el yml.
 requirements = python3,kivy,pyjnius
 
 orientation = portrait
 fullscreen = 0
 icon.filename = %(source.dir)s/logo.png
 
-
 # =============================================================================
-# Android → LO MÍNIMO Y SEGURO (COMPATIBLE CON API 33+)
+# Android Específico
 # =============================================================================
 
 android.api = 33
 android.minapi = 21
 
 android.private_storage = True
-
-# ✅ CORREGIDO: Dejamos únicamente internet y acceso a imágenes por si tu CV lleva foto de perfil.
-# Se eliminaron los permisos de audio y video que causan bloqueos innecesarios en Android 13.
 android.permissions = INTERNET, READ_MEDIA_IMAGES
 
 android.archs = armeabi-v7a,arm64-v8a
 
-# ✅ SOLO ESTAS DOS OBLIGATORIAS (NO TOCAR)
 android.enable_androidx = True
 android.use_apache_http = True
-
-# ❌ ELIMINADA LA LÍNEA DE ARGUMENTOS OBSOLETA QUE CORRUMPÍA EL MANIFIESTO
-
 
 # =============================================================================
 # Buildozer
