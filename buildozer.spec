@@ -9,7 +9,7 @@ source.include_exts = py,png,jpg,kv,atlas
 
 version = 1.0.0
 
-# ✅ CORREGIDO: Solo lo justo, pyjnius también ayuda aquí
+# ✅ LIBRERÍAS CORRECTAS: reportlab para PDF + pyjnius para Android
 requirements = python3,kivy,reportlab,pyjnius
 
 orientation = portrait
@@ -18,32 +18,30 @@ icon.filename = %(source.dir)s/logo.png
 
 
 # =============================================================================
-# Android specific
+# Android → LO MÍNIMO Y SEGURO
 # =============================================================================
 
 android.api = 33
 android.minapi = 21
 
-# ✅ SIN VERSIONES PUESTAS, SEGURO TOTAL
-# android.sdk = 24
-# android.ndk = 25b
-
 android.private_storage = True
 
-android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
+# ✅ CORREGIDO: Adaptado para Android 13+ (Se eliminó WRITE_EXTERNAL_STORAGE que causa 'crash')
+# ✅ Se agregaron permisos específicos para leer multimedia si tu app requiere cargar fotos para el CV
+android.permissions = INTERNET, READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO
+
+# ✅ CLAVE PARA PDF EN API 33: Permite guardar archivos en el almacenamiento compartido (Descargas/Documentos) usando Scoped Storage
+android.manifest.application_arguments = --requestLegacyExternalStorage=true
 
 android.archs = armeabi-v7a,arm64-v8a
 
-# ✅ LO MISMO OBLIGATORIO
+# ✅ SOLO ESTAS DOS OBLIGATORIAS (NO TOCAR)
 android.enable_androidx = True
 android.use_apache_http = True
 
-# ✅ PROTECCIÓN
-android.python_encrypt = yes
-
 
 # =============================================================================
-# Buildozer sections
+# Buildozer
 # =============================================================================
 
 [buildozer]
