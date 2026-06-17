@@ -6,37 +6,33 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout del repositorio
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Configurar Python 3.10
-        uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Instalar dependencias del sistema operativo
+      - name: Install System Dependencies
         run: |
           sudo apt-get update -y
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev libltdl-dev
-          
-          # ✅ ESTE ENLACE ES EL ARREGLO MÁGICO QUE VOS USÁS
           sudo ln -sf /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.5
-          
           pip install --user Cython==0.29.33 virtualenv buildozer
 
-      - name: Configurar ruta de ejecutables
-        run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Add Path
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Ejecutar compilacion de Buildozer
+      - name: Build APK
         env:
           BUILDOZER_GITHUB_ACTIONS: 1
         run: |
           buildozer android clean
           yes | buildozer -v android debug
 
-      - name: Subir APK generado
-        uses: actions/upload-artifact@v3
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: APK-Final
+          name: CV-Creator-GabrielSpark
           path: bin/*.apk
