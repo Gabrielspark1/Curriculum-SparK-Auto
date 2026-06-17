@@ -1,9 +1,7 @@
 name: Build APK
-
 on:
   push:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -20,12 +18,11 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev libltdl-dev
+          
+          # ✅ ESTE ENLACE ES EL ARREGLO MÁGICO QUE VOS USÁS
           sudo ln -sf /lib/x86_64-linux-gnu/libtinfo.so.6 /lib/x86_64-linux-gnu/libtinfo.so.5
+          
           pip install --user Cython==0.29.33 virtualenv buildozer
-
-      - name: Inyectar ReportLab y Pillow localmente
-        run: |
-          pip install --target=. reportlab pillow
 
       - name: Configurar ruta de ejecutables
         run: |
