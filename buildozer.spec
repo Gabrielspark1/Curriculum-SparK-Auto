@@ -9,27 +9,36 @@ source.include_exts = py,png,jpg,kv,atlas
 
 version = 1.0.0
 
-# Quedan solo estos tres requerimientos base. Reportlab y Pillow entran mediante el yml.
-requirements = python3,kivy,pyjnius
+# ✅ LIBRERÍAS CORRECTAS: Tal cual las necesitás + pyjnius para Android
+requirements = python3,kivy,pyjnius,reportlab
 
 orientation = portrait
 fullscreen = 0
 icon.filename = %(source.dir)s/logo.png
 
+
 # =============================================================================
-# Android Específico
+# Android → CONFIGURACIÓN SEGURA, IGUAL QUE LA RULETA
 # =============================================================================
 
 android.api = 33
 android.minapi = 21
 
+# ✅ SIN SDK NI NDK FORZADOS (esto fue lo que nos salvó)
+# android.sdk = 24
+# android.ndk = 25b
+
 android.private_storage = True
-android.permissions = INTERNET, READ_MEDIA_IMAGES
+
+# ✅ PERMISOS QUE VOS NECESITÁS PARA GUARDAR EL PDF
+android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 
 android.archs = armeabi-v7a,arm64-v8a
 
+# ✅ OBLIGATORIOS PARA ANDROID 12/13/14
 android.enable_androidx = True
 android.use_apache_http = True
+
 
 # =============================================================================
 # Buildozer
